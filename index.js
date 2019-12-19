@@ -43,7 +43,7 @@ client.on('message', function (topic, message) {
                     idle(obj.address);
                     break;
                 case 'shutdown':
-                    shutdown(address);
+                    shutdown(obj.address);
                     break;
                 case 'startAllRaw':
                     if (fullList.length > 0) {
