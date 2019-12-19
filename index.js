@@ -45,25 +45,22 @@ client.on('message', function (topic, message) {
                     shutdown(address);
                     break;
                 case 'startAllRaw':
-                    let p = fullList;
-                    if (p.length > 0) {
-                        p.map(p => p.address).forEach(element => {
+                    if (fullList.length > 0) {
+                        fullList.map(p => p.address).forEach(element => {
                             startRaw(element)
                         });
                     }
                     break;
                 case 'stopAllRaw':
-                    let p = fullList;
-                    if (p.length > 0) {
-                        p.map(p => p.address).forEach(element => {
+                    if (fullList.length > 0) {
+                        fullList.map(p => fullList.address).forEach(element => {
                             idle(element)
                         });
                     }
                     break;
                 case 'shutdownAll':
-                    let p = fullList;
-                    if (p.length > 0) {
-                        p.map(p => p.address).forEach(element => {
+                    if (fullList.length > 0) {
+                        fullList.map(p => fullList.address).forEach(element => {
                             shutdown(element)
                         });
                     }
