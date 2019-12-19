@@ -26,7 +26,7 @@ client.on('message', function (topic, message) {
                     let f = ble.getPeripherals();
                     if (f.length > 0) {
                         f.map(p => p.address).forEach(element => {
-                            startRaw(element)
+                            ble.startRaw(element)
                         });
                     }
                     break;
@@ -34,7 +34,7 @@ client.on('message', function (topic, message) {
                     f = ble.getPeripherals();
                     if (f.length > 0) {
                         f.map(p => p.address).forEach(element => {
-                            idle(element)
+                            ble.idle(element)
                         });
                     }
                     break;
@@ -42,7 +42,7 @@ client.on('message', function (topic, message) {
                     f = ble.getPeripherals();
                     if (f.length > 0) {
                         f.map(p => p.address).forEach(element => {
-                            shutdown(element)
+                            ble.shutdown(element)
                         });
                     }
                     break;
