@@ -41,38 +41,6 @@ function getPeripheral(peripheralAddress) {
     return { peripheral, activityTime };
 }
 
-function MPUConfig(peripheralAddress) {
-    let peripheral = peripherals.find(p => p.address === peripheralAddress)
-    if (peripheral) {
-        peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff3c'], function (error, services, characteristics) {
-            var MPUCharacteristic = characteristics.find(c => c.uuid == 'ff3c');
-            MPUCharacteristic.write(new Buffer([0x07, 0x00, 0x00, 0x08, 0x03, 0x03, 0x10]), true, function (error) {
-                if (error) {
-                    console.log(error)
-                } else {
-                    console.log('Changed MPU config')
-                }
-            })
-        })
-    }
-}
-
-function changeRate(peripheralAddress, rateMs) {
-    let peripheral = peripherals.find(p => p.address === peripheralAddress)
-    if (peripheral) {
-        peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff3b'], function (error, services, characteristics) {
-            var RateCharacteristic = characteristics.find(c => c.uuid == 'ff3b');
-            RateCharacteristic.write(new Buffer([rateMs]), true, function (error) {
-                if (error) {
-                    console.log(error)
-                } else {
-                    console.log('Changed rate to ' + rateMs + 'ms')
-                }
-            })
-        })
-    }
-}
-
 function startRaw(peripheralAddress) {
     let peripheral = peripherals.find(p => p.address === peripheralAddress)
     let rep = fullList.find((p => p.address === peripheralAddress))
@@ -85,7 +53,7 @@ function startRaw(peripheralAddress) {
             stateCharacteristic.write(new Buffer([0x01]), true, function (error) {
                 console.log('Started RAW');
                 rep.startedRaw = true;
-                matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId/8), green);
+                matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
 
                 rawCharacteristic.on('data', function (data, isNotification) {
                     let outputs = [];
@@ -171,14 +139,14 @@ function idle(peripheralAddress) {
             var stateCharacteristic = characteristics.find(c => c.uuid == 'ff35');
             stateCharacteristic.write(new Buffer([0x00]), true, function (error) {
                 console.log('Stopped RAW');
-                matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId/8), red);
+                matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
                 let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
                 var logger = fs.createWriteStream('./logs/' + filename, {
                     flags: 'a' // 'a' means appending (old data will be preserved)
                 })
                 //console.log(convertToCSV(rep.rawData))
-                if(rep.rawData.length > 0)
+                if (rep.rawData.length > 0)
                     logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
                 rep.rawData = [];
             });
@@ -233,7 +201,8 @@ noble.on('discover', function (peripheral) {
             }
             fullList.push(rep);
             peripherals.push(peripheral);
-            matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId/8), blue);
+            matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), blue);
+            client.publish('connected', JSON.stringify(fullList));
             //MPUConfig(address)
             peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff37', 'ff38', 'ff3c', 'ff3b'], function (error, services, characteristics) {
                 var SmartLifeService = services[0];
@@ -287,7 +256,7 @@ noble.on('discover', function (peripheral) {
         peripheral.once('disconnect', function () {
             console.log(address, 'disconnected');
             let tempLedId = fullList.find(p => p.address == peripheral.address).ledId;
-            matrix.setPixel(tempLedId % 8, 2 + ~~(tempLedId/8), off);
+            matrix.setPixel(tempLedId % 8, 2 + ~~(tempLedId / 8), off);
             peripherals = peripherals.filter(p => { return p.address !== peripheral.address })
             fullList = fullList.filter(p => { return p.address !== peripheral.address })
         });
