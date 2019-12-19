@@ -12,6 +12,7 @@ client.on('message', function (topic, message) {
     switch (topic) {
         case 'operation':
             const obj = JSON.parse(message.toString())
+            let f;
             switch (obj.operation) {
                 case 'startRaw':
                     ble.startRaw(obj.address);
@@ -23,7 +24,7 @@ client.on('message', function (topic, message) {
                     ble.shutdown(obj.address);
                     break;
                 case 'startAllRaw':
-                    let f = ble.getPeripherals();
+                    f = ble.getPeripherals();
                     if (f.length > 0) {
                         f.map(p => p.address).forEach(element => {
                             ble.startRaw(element)
