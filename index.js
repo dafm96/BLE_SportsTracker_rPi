@@ -9,10 +9,10 @@ client.on('connect', function () {
 const ble = require('./services/ble')
 
 client.on('message', function (topic, message) {
+    let f;
     switch (topic) {
         case 'operation':
             const obj = JSON.parse(message.toString())
-            let f;
             switch (obj.operation) {
                 case 'startRaw':
                     ble.startRaw(obj.address);
