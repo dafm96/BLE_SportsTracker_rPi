@@ -53,14 +53,14 @@ client.on('message', function (topic, message) {
                     break;
                 case 'stopAllRaw':
                     if (fullList.length > 0) {
-                        fullList.map(p => fullList.address).forEach(element => {
+                        fullList.map(p => p.address).forEach(element => {
                             idle(element)
                         });
                     }
                     break;
                 case 'shutdownAll':
                     if (fullList.length > 0) {
-                        fullList.map(p => fullList.address).forEach(element => {
+                        fullList.map(p => p.address).forEach(element => {
                             shutdown(element)
                         });
                     }
@@ -246,7 +246,7 @@ noble.on('discover', function (peripheral) {
             fullList.push(rep);
             peripherals.push(peripheral);
             matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), blue);
-            client.publish('connected', address);
+            client.publish('connected', JSON.stringify(fullList));
             //MPUConfig(address)
             peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff37', 'ff38', 'ff3c', 'ff3b'], function (error, services, characteristics) {
                 var SmartLifeService = services[0];
