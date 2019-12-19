@@ -67,6 +67,9 @@ client.on('message', function (topic, message) {
                     break;
             }
             break;
+        case 'fetchDevices':
+            client.publish('connected', JSON.stringify(fullList));
+            break;
         default:
             console.log(topic, message)
 
