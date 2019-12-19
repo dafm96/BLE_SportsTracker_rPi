@@ -3,7 +3,7 @@ var client = mqtt.connect('mqtt://192.168.1.1')
 var noble = require('noble');
 //change min and max in leconn located in /node_modules/noble/lib/hci-socket/hci.js
 const matrix = require('sense-hat-led');
-var rawToAi = require('./rawToAi')
+var rawToAi = require('./services/rawToAi')
 const off = [0, 0, 0];
 const red = [255, 0, 0];
 const green = [0, 255, 0];
