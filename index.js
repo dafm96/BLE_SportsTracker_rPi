@@ -6,6 +6,10 @@ function handleOperation(message) {
     console.log("OPERATION", message)
 }
 
+function handleOther(message) {
+    console.log("OTHER", message)
+}
+
 client.on('connect', function () {
     client.subscribe('operation');
     client.subscribe('other');
