@@ -28,6 +28,7 @@ var whitelist = ['0C:B2:B7:39:97:B0',
 
 client.on('connect', function () {
     client.subscribe('operation');
+    client.subscribe('fetchDevices');
 })
 
 client.on('message', function (topic, message) {
