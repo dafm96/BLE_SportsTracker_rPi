@@ -31,7 +31,7 @@ client.on('message', function (topic, message) {
                     f = ble.getPeripherals();
                     if (f.length > 0) {
                         f.map(p => p.address).forEach(element => {
-                            ble.startRaw(element)
+                            ble.startRaw(element, obj.gameId)
                         });
                     }
                     break;
