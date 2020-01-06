@@ -74,7 +74,7 @@ function startRaw(peripheralAddress) {
                             console.log(err);
                         }
                         else if (result){
-                            console.log(result)
+                            rep.tracking = result
                         }
                     }, filename)
                 }, 30000)
@@ -146,9 +146,9 @@ function startRaw(peripheralAddress) {
 
 function convertToCSV(arr) {
     if (arr != undefined && arr.length > 0) {
-        const array = [Object.keys(arr[0])].concat(arr)
+        //const array = [Object.keys(arr[0])].concat(arr)
 
-        return array.map(it => {
+        return arr.map(it => {
             return Object.values(it).toString()
         }).join('\n')
     }
