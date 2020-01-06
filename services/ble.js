@@ -31,7 +31,12 @@ function bufferToByteArray(buffer) {
 }
 
 function getPeripherals() {
-    return fullList;
+    return fullList.map(p => {
+        let activityTime = rawToAi.getActivityTime(p.address);
+        p.activityTime = activityTime;
+        //TODO put here tracking info
+        return p
+    });
 }
 
 function getPeripheral(peripheralAddress) {
@@ -239,7 +244,6 @@ noble.on('discover', function (peripheral) {
                 buttonCharacteristic.subscribe(function (error) {
                     console.log('button notification on');
                 });
-
                 // stateCharacteristic.on('data', function(data, isNotification) {
                 //     console.log(data)
                 // })
@@ -279,9 +283,9 @@ function tracking(callback) {
     let error = false;
     //TODO instead of saving the raw data to file, save to DB
     var spawn = require('child_process').spawn,
-        ls = spawn('octave', ['./services/inertial_pdr.m',
-            './logs/' + filename //TODO fix filename
-        ]);
+	 ls = spawn('octave', ['./services/inertial_pdr.m',
+             './logs/' + filename //TODO fix filename
+         ]);
 
     ls.stdout.on('data', function (data) {
         out += data.toString();
