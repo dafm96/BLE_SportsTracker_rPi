@@ -60,6 +60,25 @@ function startRaw(peripheralAddress) {
                 rep.startedRaw = true;
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
 
+                setInterval(async () => {
+                    let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
+                    var logger = fs.createWriteStream('./logs/' + filename, {
+                        flags: 'a' // 'a' means appending (old data will be preserved)
+                    })
+                    //console.log(convertToCSV(rep.rawData))
+                    if (rep.rawData.length > 0)
+                        logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
+
+                    tracking((err, result) => {
+                        if(err){
+                            console.log(err);
+                        }
+                        else if (result){
+                            console.log(result)
+                        }
+                    }, filename)
+                }, 30000)
+
                 rawCharacteristic.on('data', function (data, isNotification) {
                     let outputs = [];
                     let arr = Array.prototype.slice.call(data, 0)
@@ -146,14 +165,14 @@ function idle(peripheralAddress) {
                 console.log('Stopped RAW');
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
-                let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
-                var logger = fs.createWriteStream('./logs/' + filename, {
-                    flags: 'a' // 'a' means appending (old data will be preserved)
-                })
-                //console.log(convertToCSV(rep.rawData))
-                if (rep.rawData.length > 0)
-                    logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
-                rep.rawData = [];
+                // let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
+                // var logger = fs.createWriteStream('./logs/' + filename, {
+                //     flags: 'a' // 'a' means appending (old data will be preserved)
+                // })
+                // //console.log(convertToCSV(rep.rawData))
+                // if (rep.rawData.length > 0)
+                //     logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
+                // rep.rawData = [];
             });
         })
     }
@@ -277,7 +296,7 @@ noble.on('discover', function (peripheral) {
     }
 })
 
-function tracking(callback) {
+function tracking(callback, filename) {
     //TODO grab device/player and session?
     let out = '';
     let error = false;
