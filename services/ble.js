@@ -74,7 +74,7 @@ function startRaw(peripheralAddress) {
                             console.log(err);
                         }
                         else if (result){
-                            rep.tracking = result
+                            rep.tracking = JSON.parse(result)
                         }
                     }, filename)
                 }, 30000)
@@ -136,7 +136,7 @@ function startRaw(peripheralAddress) {
                         gyrY,
                         gyrZ
                     };
-                    let ai = rawToAi.convertRawToActivity(peripheralAddress, [accX, accY, accZ]);
+                    rawToAi.convertRawToActivity(peripheralAddress, [accX, accY, accZ]);
                     rep.rawData.push(sample);
                 });
             });
