@@ -1,9 +1,13 @@
 var mqtt = require('mqtt')
-var client = mqtt.connect('mqtt://192.168.1.1')
+var client = mqtt.connect('mqtt://192.168.1.122')
 
 client.on('connect', function () {
     client.subscribe('operation');
     client.subscribe('fetchDevices');
+    setInterval(() => {
+        f = ble.getPeripherals();
+        client.publish('connected', JSON.stringify(f));
+    }, 1000);
 })
 
 const ble = require('./services/ble')
@@ -48,10 +52,6 @@ client.on('message', function (topic, message) {
                     }
                     break;
             }
-            break;
-        case 'fetchDevices':
-            f = ble.getPeripherals();
-            client.publish('connected', JSON.stringify(f));
             break;
         default:
             console.log(topic, message)
