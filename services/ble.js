@@ -224,7 +224,8 @@ noble.on('discover', function (peripheral) {
                 startedRaw: false,
                 rawData: [],
                 tracking: {},
-                ledId: peripherals.length
+                ledId: peripherals.length,
+                interval: {}
             }
             fullList.push(rep);
             peripherals.push(peripheral);
