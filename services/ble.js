@@ -60,7 +60,7 @@ function startRaw(peripheralAddress) {
                 rep.startedRaw = true;
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
 
-                setInterval(async () => {
+                rep.interval = setInterval(async () => {
                     let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
                     var logger = fs.createWriteStream('./logs/' + filename, {
                         flags: 'a' // 'a' means appending (old data will be preserved)
@@ -165,6 +165,8 @@ function idle(peripheralAddress) {
                 console.log('Stopped RAW');
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
+                if(rep.interval)
+                    clearInterval(rep.interval)
                 // let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
                 // var logger = fs.createWriteStream('./logs/' + filename, {
                 //     flags: 'a' // 'a' means appending (old data will be preserved)
@@ -221,6 +223,7 @@ noble.on('discover', function (peripheral) {
                 connected: true,
                 startedRaw: false,
                 rawData: [],
+                tracking: {},
                 ledId: peripherals.length
             }
             fullList.push(rep);
