@@ -173,16 +173,18 @@ angle = 180; % Rotation angle required to achieve an aesthetic alignment of the 
 rotation_matrix = [cosd(angle) -sind(angle);
     sind(angle) cosd(angle)];
 pos_r = zeros(2,data_size);
-for idx = 1:data_size
-    pos_r(:,idx) = rotation_matrix*[pos_n(1,idx) pos_n(2,idx)]';
-end
+%for idx = 1:data_size
+%end
 
 steps = 0;
 no_ones = 0;
 no_zeros = 0;
 last = 0;
+out = [pos_r(1,:); pos_r(2,:); walking(:)']';
+printf('{"data": [');
 %% Algorithm to identify steps in ones %%
 for idx = 1:data_size
+    pos_r(:,idx) = rotation_matrix*[pos_n(1,idx) pos_n(2,idx)]';
     current = walking(idx);
     if (last == 0 && current == 1)
         no_ones++;
@@ -201,16 +203,15 @@ for idx = 1:data_size
         no_zeros++;
         no_ones = 0;
     endif
-    %printf("%d %d : %d %d\n", last, current, no_zeros, no_ones);
+    printf('{"X": "%i", "Y":"%i", "Walking":"%i"},\n', out(idx, :)');
     last = current;
 endfor
-out = [pos_r(1,:); pos_r(2,:); walking(:)']';
-printf('{"data": [');
 
-for idx = 1:data_size-1
-    printf('{"X": "%i", "Y":"%i", "Walking":"%i"},\n', out(idx, :)');
-endfor
+
+%for idx = 1:data_size-1
+%    printf('{"X": "%i", "Y":"%i", "Walking":"%i"},\n', out(idx, :)');
+%endfor
 
 printf('{"X": "%i", "Y":"%i", "Walking":"%i"}],\n', out(data_size, :)');
 
-printf('"Steps": "%d","Distance":"%i"}\n', steps, distance(data_size));
+printf('{"Steps": "%d","Distance":"%i"}\n', steps, distance(data_size));
