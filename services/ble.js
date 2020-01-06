@@ -60,24 +60,24 @@ function startRaw(peripheralAddress) {
                 rep.startedRaw = true;
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
 
-                peripheral.interval = setInterval(async () => {
-                    let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
-                    var logger = fs.createWriteStream('./logs/' + filename, {
-                        flags: 'a' // 'a' means appending (old data will be preserved)
-                    })
-                    //console.log(convertToCSV(rep.rawData))
-                    if (rep.rawData.length > 0)
-                        logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
+                // setInterval(async () => {
+                //     let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
+                //     var logger = fs.createWriteStream('./logs/' + filename, {
+                //         flags: 'a' // 'a' means appending (old data will be preserved)
+                //     })
+                //     //console.log(convertToCSV(rep.rawData))
+                //     if (rep.rawData.length > 0)
+                //         logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
 
-                    tracking((err, result) => {
-                        if(err){
-                            console.log(err);
-                        }
-                        else if (result){
-                            rep.tracking = JSON.parse(result)
-                        }
-                    }, filename)
-                }, 30000)
+                //     tracking((err, result) => {
+                //         if(err){
+                //             console.log(err);
+                //         }
+                //         else if (result){
+                //             rep.tracking = JSON.parse(result)
+                //         }
+                //     }, filename)
+                // }, 30000)
 
                 rawCharacteristic.on('data', function (data, isNotification) {
                     let outputs = [];
@@ -165,8 +165,6 @@ function idle(peripheralAddress) {
                 console.log('Stopped RAW');
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
-                if(peripheral.interval)
-                    clearInterval(peripheral.interval)
                 // let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
                 // var logger = fs.createWriteStream('./logs/' + filename, {
                 //     flags: 'a' // 'a' means appending (old data will be preserved)
@@ -223,9 +221,7 @@ noble.on('discover', function (peripheral) {
                 connected: true,
                 startedRaw: false,
                 rawData: [],
-                tracking: {},
                 ledId: peripherals.length,
-                interval: {}
             }
             fullList.push(rep);
             peripherals.push(peripheral);
