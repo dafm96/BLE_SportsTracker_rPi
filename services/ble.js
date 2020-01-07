@@ -46,10 +46,12 @@ function getPeripheral(peripheralAddress) {
     return { peripheral, activityTime };
 }
 
-function startRaw(peripheralAddress) {
+function startRaw(peripheralAddress, gameId, ppgId) {
     let peripheral = peripherals.find(p => p.address === peripheralAddress)
     let rep = fullList.find((p => p.address === peripheralAddress))
     if (peripheral) {
+        rep.gameId = gameId;
+        rep.ppgId = ppgId;
         peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff38'], function (error, services, characteristics) {
             var SmartLifeService = services[0];
             var stateCharacteristic = characteristics.find(c => c.uuid == 'ff35');
@@ -119,7 +121,7 @@ function startRaw(peripheralAddress) {
                             gyrZ *= ratio_GYR;
                         }
                     }
-
+                    rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
                     nSample = (nSample * 0.02).toFixed(2);
                     accX = accX * 9.8;
                     accY = accY * 9.8;
@@ -136,7 +138,7 @@ function startRaw(peripheralAddress) {
                         gyrY,
                         gyrZ
                     };
-                    rawToAi.convertRawToActivity(peripheralAddress, [accX, accY, accZ]);
+                    
                     rep.rawData.push(sample);
                 });
             });
@@ -165,6 +167,7 @@ function idle(peripheralAddress) {
                 console.log('Stopped RAW');
                 matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
+                rawToAi.reset(peripheralAddress);
                 // let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
                 // var logger = fs.createWriteStream('./logs/' + filename, {
                 //     flags: 'a' // 'a' means appending (old data will be preserved)
@@ -211,7 +214,7 @@ noble.on('scanStop', function () {
 
 noble.on('discover', function (peripheral) {
     var address = peripheral.address
-    console.log(address)
+    //console.log(address)
     if (whitelist.includes(peripheral.address.toUpperCase()) && peripheral.state === 'disconnected') {
 
         peripheral.once('connect', function () {

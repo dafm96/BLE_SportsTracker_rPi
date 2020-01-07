@@ -1,6 +1,19 @@
 let map = new Map();
 const aiError = Math.pow(0.001, 2); //power here to simplify
-let {sendActivityTimeData} = require('../index')
+var index = require('../index')
+
+function reset(peripheralAddress) {
+    map.set(peripheralAddress, {
+            "accX": [],
+            "accY": [],
+            "accZ": [],
+            "activityTime": {
+                "STILL": 0,
+                "WALKING": 0,
+                "RUNNING": 0
+            }
+        })
+}
 
 function getActivityTime(peripheralAddress) {
     if (map.get(peripheralAddress))
@@ -13,7 +26,7 @@ function getActivityTime(peripheralAddress) {
         };
 }
 
-function convertRawToActivity(peripheralAddress, raw) {
+function convertRawToActivity(gameId, ppgId, peripheralAddress, raw) {
 
     if (map.get(peripheralAddress) === undefined) {
         map.set(peripheralAddress, {
@@ -56,7 +69,7 @@ function convertRawToActivity(peripheralAddress, raw) {
             //activityTime.put("RUNNING", activityTime.get("RUNNING") + 1);
             map.get(peripheralAddress).activityTime.RUNNING = tempActivityTime.RUNNING + 1;
         }
-        sendActivityTimeData(gameId, ppgId, map.get(peripheralAddress).activityTime)
+        index.SendActivityTimeData(gameId, ppgId, map.get(peripheralAddress).activityTime);
         //console.log(peripheralAddress, "Activity Index: " + ai);
     }
 }
@@ -80,4 +93,4 @@ function stdev(accArray) {
     return Math.sqrt(variance);
 }
 
-var exports = module.exports = { convertRawToActivity, getActivityTime };
+var exports = module.exports = { convertRawToActivity, getActivityTime, reset };
