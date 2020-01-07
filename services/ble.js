@@ -46,10 +46,9 @@ function getPeripheral(peripheralAddress) {
     return { peripheral, activityTime };
 }
 
-function startRaw(peripheralAddress, gameId) {
+function startRaw(peripheralAddress) {
     let peripheral = peripherals.find(p => p.address === peripheralAddress)
     let rep = fullList.find((p => p.address === peripheralAddress))
-    rep.currentGameId = gameId;
     if (peripheral) {
         peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff38'], function (error, services, characteristics) {
             var SmartLifeService = services[0];
