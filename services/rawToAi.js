@@ -1,5 +1,6 @@
 let map = new Map();
 const aiError = Math.pow(0.001, 2); //power here to simplify
+let {sendActivityTimeData} = require('../index')
 
 function getActivityTime(peripheralAddress) {
     if (map.get(peripheralAddress))
@@ -55,6 +56,7 @@ function convertRawToActivity(peripheralAddress, raw) {
             //activityTime.put("RUNNING", activityTime.get("RUNNING") + 1);
             map.get(peripheralAddress).activityTime.RUNNING = tempActivityTime.RUNNING + 1;
         }
+        sendActivityTimeData(gameId, ppgId, map.get(peripheralAddress).activityTime)
         //console.log(peripheralAddress, "Activity Index: " + ai);
     }
 }

@@ -60,6 +60,6 @@ client.on('message', function (topic, message) {
 })
 
 
-export.sendActivityTimeData = (ppgId, data){
-    
+exports.sendActivityTimeData = (gameId, ppgId, data) => {
+    console.log(data)
 }
