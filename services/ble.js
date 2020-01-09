@@ -11,6 +11,8 @@ const blue = [0, 0, 255];
 matrix.clear(off);
 var fs = require('fs')
 
+const JumpTracker = require('./jumpTracker.js');
+
 var fullList = []
 var peripherals = [];
 var whitelist = ['0C:B2:B7:39:97:B0',
@@ -49,6 +51,7 @@ function getPeripheral(peripheralAddress) {
 function startRaw(peripheralAddress, gameId, ppgId) {
     let peripheral = peripherals.find(p => p.address === peripheralAddress)
     let rep = fullList.find((p => p.address === peripheralAddress))
+    let jt = new JumpTracker();
     if (peripheral) {
         rep.gameId = gameId;
         rep.ppgId = ppgId;
@@ -122,7 +125,9 @@ function startRaw(peripheralAddress, gameId, ppgId) {
                         }
                     }
                     rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
+
                     nSample = (nSample * 0.02).toFixed(2);
+                    jt.analyzeData(accX, nSample);
                     accX = accX * 9.8;
                     accY = accY * 9.8;
                     accZ = accZ * 9.8;
