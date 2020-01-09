@@ -51,10 +51,10 @@ function getPeripheral(peripheralAddress) {
 function startRaw(peripheralAddress, gameId, ppgId) {
     let peripheral = peripherals.find(p => p.address === peripheralAddress)
     let rep = fullList.find((p => p.address === peripheralAddress))
-    let jt = new JumpTracker();
     if (peripheral) {
         rep.gameId = gameId;
         rep.ppgId = ppgId;
+        let jt = new JumpTracker(gameId, ppgId, peripheralAddress);
         peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff38'], function (error, services, characteristics) {
             var SmartLifeService = services[0];
             var stateCharacteristic = characteristics.find(c => c.uuid == 'ff35');

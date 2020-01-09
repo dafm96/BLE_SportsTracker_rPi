@@ -65,4 +65,10 @@ function SendActivityTimeData (gameId, ppgId, data) {
     client.publish('metrics/' + gameId + '/activityTime', JSON.stringify(f));
 }
 
+function SendJumps(gameId, ppgId, data) {
+    let f = {gameId, ppgId, 'jumps': data};
+    client.publish('metrics/' + gameId + '/jumps', JSON.stringify(f));
+}
+
 module.exports.SendActivityTimeData = SendActivityTimeData;
+module.exports.SendJumps = SendJumps;

@@ -11,10 +11,11 @@ const DATATOSTORE = 2;
 const SAMPLEFREQUENCY = 20;
 
 var ft = require('fourier-transform');
+var index = require('../index')
 
 class JumpTracker {
 
-    constructor() {
+    constructor(gameId, ppgId, peripheralAddress) {
         this.sampleSize = 0;
         this.max1Found = 0;
         this.max2Found = 0
@@ -32,6 +33,10 @@ class JumpTracker {
         this.jumpSamples = [[]];
         this.jumps = [];
         this.max1Index = 0;
+
+        this.gameId = gameId;
+        this.ppgId = ppgId;
+        this.peripheralAddress = peripheralAddress;
     }
 
     findLocalMinimum(i) {
@@ -262,12 +267,12 @@ class JumpTracker {
         var jumpHeight;
         if (jumpTime < MAXJUMPTIME && jumpTime > MINJUMPTIME) {
             var fourierMax = this.getFourierMax();
-            console.log(fourierMax)
+            console.log(fourierMax, this.min[1])
             if ((fourierMax === 1.25 && this.min[1] < 0) || this.min[1] < MINTHRESHOLD) {
                 jumpHeight = 0.5 * GRAVITY * halfJumpTime * halfJumpTime;
                 this.jumps.push([this.max2[0], jumpHeight]);
-                console.log(this.jumps)
-                console.log("jump: " + jumpHeight + "m");
+                console.log("Jump Sent")
+                index.SendJumps(this.gameId, this.ppgId, this.jumps.length);
                 this.restartJumpAnalysis();
             }
             else
@@ -297,7 +302,6 @@ class JumpTracker {
     getFourierMax() {
         var sampleValues = this.getSampleAccelerations();
         var fft = ft(sampleValues);
-        console.log(fft)
         var index = -1;
         var maxValue = 0;
         for (var i = 1; i < 16; i++) {
