@@ -1,5 +1,5 @@
 var ft = require('fourier-transform');
-var index = require('../index')
+//var index = require('../index')
 
 const GYRO_THRESHOLD = 250;
 const FOURIER_MAXTHRESHOLD = 0.1;
@@ -8,7 +8,7 @@ const ACC_THRESHOLD = 2.5;
 const FOURIER_ACCYTHRESHOLD = 0.6;
 const MAX_FOUND = 5;
 
-class JumpTracker {
+class DribbleTracker {
 
     constructor(gameId, ppgId, peripheralAddress, readingFrequency) {
         this.dataAccY = ([]);
@@ -53,16 +53,16 @@ class JumpTracker {
         return Math.round(this.dribbleCount / this.dribblingTime * 100.0) / 100.0;
     };
 
-	/**
+    /**
     * Main method, called by the main class
     * @param {string} line line of a csv file
     */
-    analyzeData = function (line) {
-        var lineArray = line.split(",");
-        var accY = parseFloat(lineArray[5].substring(1, lineArray[5].length - 1));
-        var gyroX = parseFloat(lineArray[7].substring(1, lineArray[7].length - 1));
+    analyzeData (line) {
+        var lineArray = line//.split(",");
+        var accY = parseFloat(lineArray[5]);
+        var gyroX = parseFloat(lineArray[7]);
         this.lastTime = parseFloat(lineArray[10].substring(lineArray[10].lastIndexOf(":") + 1, lineArray[10].indexOf("+")));
-        var dataSession = parseInt(lineArray[2].substring(1, lineArray[2].length - 1));
+        var dataSession = parseInt(lineArray[2]);
 
         if (dataSession !== this.currentSession) {
             this.evaluateLastSamples();
@@ -196,7 +196,9 @@ class JumpTracker {
         // Complex[] complexNumbers = ft.getTransformedDataAsComplex();
         // double[] results = getFourierResults(fourierSize, complexNumbers);
 
-        var results = this.getFourierResults(fourierSize);
+        // var results = this.getFourierResults(fourierSize);
+        var results = ft(sampleValues);
+
         var i = this.getFourierMaxIndexValue(results);
         return [i[0] / fourierSize, i[1]];
     };
@@ -303,3 +305,5 @@ class JumpTracker {
         this.firstMaxFound = false;
     };
 }
+
+module.exports = DribbleTracker
