@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/dafm96/BLE_SportsTracker_rPi#readme",
   "dependencies": {
+    "csv-parse": "^4.8.3",
     "fourier-transform": "^1.1.2",
     "mosca": "^2.8.3",
     "noble": "^1.9.1",

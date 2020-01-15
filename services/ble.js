@@ -12,6 +12,7 @@ const blue = [0, 0, 255];
 var fs = require('fs')
 
 const JumpTracker = require('./jumpTracker.js');
+const DribbleTracker = require('./jumpTracker.js');
 
 var fullList = []
 var peripherals = [];
@@ -48,13 +49,17 @@ function getPeripheral(peripheralAddress) {
     return { peripheral, activityTime };
 }
 
-function startRaw(peripheralAddress, gameId, ppgId) {
+function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
     let peripheral = peripherals.find(p => p.address === peripheralAddress)
     let rep = fullList.find((p => p.address === peripheralAddress))
     if (peripheral) {
         rep.gameId = gameId;
         rep.ppgId = ppgId;
-        let jt = new JumpTracker(gameId, ppgId, peripheralAddress);
+        //Depending on the sensor position
+        if(peripheralPosition === 'BACK')
+            var jt = new JumpTracker(gameId, ppgId, peripheralAddress);
+        if(peripheralPosition === 'BACK')
+            var dt = new DribbleTracker(gameId, ppgId, peripheralAddress);
         peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff38'], function (error, services, characteristics) {
             var SmartLifeService = services[0];
             var stateCharacteristic = characteristics.find(c => c.uuid == 'ff35');
@@ -127,7 +132,11 @@ function startRaw(peripheralAddress, gameId, ppgId) {
                     rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
 
                     nSample = (nSample * 0.02).toFixed(2);
-                    jt.analyzeData(accX, nSample);
+                    //Depending on the sensor position
+                    if(peripheralPosition === 'BACK')
+                        jt.analyzeData(accX, nSample);
+                    if(peripheralPosition === 'HAND')
+                        dt.analyzeData(accX, gyroX);//???
                     accX = accX * 9.8;
                     accY = accY * 9.8;
                     accZ = accZ * 9.8;

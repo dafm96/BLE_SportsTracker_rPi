@@ -19,7 +19,7 @@ client.on('message', function (topic, message) {
             const obj = JSON.parse(message.toString())
             switch (obj.operation) {
                 case 'startRaw':
-                    ble.startRaw(obj.address, obj.gameId, obj.ppgId);
+                    ble.startRaw(obj.address, obj.gameId, obj.ppgId, obj.peripheralPosition);
                     break;
                 case 'stopRaw':
                     ble.idle(obj.address);
