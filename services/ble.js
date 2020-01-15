@@ -59,7 +59,7 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
         //Depending on the sensor position
         if(peripheralPosition === 'BACK')
             var jt = new JumpTracker(gameId, ppgId, peripheralAddress);
-        if(peripheralPosition === 'BACK')
+        if(peripheralPosition === 'HAND')
             var dt = new DribbleTracker(gameId, ppgId, peripheralAddress);
         peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff38'], function (error, services, characteristics) {
             var SmartLifeService = services[0];
