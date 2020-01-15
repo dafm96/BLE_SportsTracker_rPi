@@ -2,13 +2,13 @@
 
 var noble = require('noble');
 //change min and max in leconn located in /node_modules/noble/lib/hci-socket/hci.js
-const matrix = require('sense-hat-led');
+//const matrix = require('sense-hat-led');
 var rawToAi = require('./rawToAi')
 const off = [0, 0, 0];
 const red = [255, 0, 0];
 const green = [0, 255, 0];
 const blue = [0, 0, 255];
-matrix.clear(off);
+//matrix.clear(off);
 var fs = require('fs')
 
 const JumpTracker = require('./jumpTracker.js');
@@ -63,7 +63,7 @@ function startRaw(peripheralAddress, gameId, ppgId) {
             stateCharacteristic.write(new Buffer([0x01]), true, function (error) {
                 console.log('Started RAW');
                 rep.startedRaw = true;
-                matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
+                //matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
 
                 // setInterval(async () => {
                 //     let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
@@ -170,7 +170,7 @@ function idle(peripheralAddress) {
             var stateCharacteristic = characteristics.find(c => c.uuid == 'ff35');
             stateCharacteristic.write(new Buffer([0x00]), true, function (error) {
                 console.log('Stopped RAW');
-                matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
+                //matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
                 rawToAi.reset(peripheralAddress);
                 // let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
@@ -233,7 +233,7 @@ noble.on('discover', function (peripheral) {
             }
             fullList.push(rep);
             peripherals.push(peripheral);
-            matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), blue);
+            //matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), blue);
             // client.publish('connected', JSON.stringify(fullList));
             //MPUConfig(address)
             peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff37', 'ff38', 'ff3c', 'ff3b'], function (error, services, characteristics) {
@@ -287,7 +287,7 @@ noble.on('discover', function (peripheral) {
         peripheral.once('disconnect', function () {
             console.log(address, 'disconnected');
             let tempLedId = fullList.find(p => p.address == peripheral.address).ledId;
-            matrix.setPixel(tempLedId % 8, 2 + ~~(tempLedId / 8), off);
+            //matrix.setPixel(tempLedId % 8, 2 + ~~(tempLedId / 8), off);
             peripherals = peripherals.filter(p => { return p.address !== peripheral.address })
             fullList = fullList.filter(p => { return p.address !== peripheral.address })
         });
