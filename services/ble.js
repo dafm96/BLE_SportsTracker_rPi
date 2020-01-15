@@ -11,6 +11,7 @@ const blue = [0, 0, 255];
 //matrix.clear(off);
 var fs = require('fs')
 
+const index = require('../index');
 const JumpTracker = require('./jumpTracker.js');
 const DribbleTracker = require('./jumpTracker.js');
 
@@ -295,6 +296,7 @@ noble.on('discover', function (peripheral) {
 
         peripheral.once('disconnect', function () {
             console.log(address, 'disconnected');
+            index.Disconnected(peripheral.address);
             let tempLedId = fullList.find(p => p.address == peripheral.address).ledId;
             //matrix.setPixel(tempLedId % 8, 2 + ~~(tempLedId / 8), off);
             peripherals = peripherals.filter(p => { return p.address !== peripheral.address })

@@ -59,6 +59,10 @@ client.on('message', function (topic, message) {
     }
 })
 
+function Disconnected (peripheralAddress) {
+    console.log('disconnected', peripheralAddress)
+    client.publish('disconnected', peripheralAddress)
+}
 
 function SendActivityTimeData (gameId, ppgId, data) {
     let f = {gameId, ppgId, 'activityTime': data};
@@ -70,5 +74,6 @@ function SendJumps(gameId, ppgId, data) {
     client.publish('metrics/' + gameId + '/jumps', JSON.stringify(f));
 }
 
+module.exports.Disconnected = Disconnected;
 module.exports.SendActivityTimeData = SendActivityTimeData;
 module.exports.SendJumps = SendJumps;
