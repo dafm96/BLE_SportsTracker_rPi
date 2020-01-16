@@ -77,10 +77,16 @@ function SendJumps(gameId, ppgId, data) {
 
 function SendSteps(gameId, ppgId, data) {
     let f = {gameId, ppgId, 'steps': data.Steps, 'distance': data.Distance};
-    console.log(f)
     client.publish('metrics/' + gameId + '/steps', JSON.stringify(f));
 }
+
+function SendDribbles(gameId, ppgId, data) {
+    let f = {gameId, ppgId, 'dribbling_time': data};
+    client.publish('metrics/' + gameId + '/dribble', JSON.stringify(f));
+}
+
 module.exports.Disconnected = Disconnected;
 module.exports.SendActivityTimeData = SendActivityTimeData;
 module.exports.SendJumps = SendJumps;
 module.exports.SendSteps = SendSteps;
+module.exports.SendDribbles = SendDribbles;
