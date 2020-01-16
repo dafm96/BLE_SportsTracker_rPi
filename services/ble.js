@@ -330,13 +330,11 @@ noble.on('discover', function (peripheral) {
 })
 
 function tracking(callback, filename) {
-    //TODO grab device/player and session?
     let out = '';
     let error = false;
-    //TODO instead of saving the raw data to file, save to DB
     var spawn = require('child_process').spawn,
 	 ls = spawn('octave-cli', ['./services/inertial_pdr.m',
-             './logs/' + filename //TODO fix filename
+             './logs/' + filename
          ]);
 
     ls.stdout.on('data', function (data) {
@@ -344,13 +342,11 @@ function tracking(callback, filename) {
     });
 
     ls.stderr.on('data', function (data) {
-        console.log('stderr: ' + data.toString());
         if (data.toString().includes('error'))
             error = true;
     });
 
     ls.on('exit', function (code) {
-        console.log('child process exited with code ' + code.toString());
         if (error || out == '') {
             return callback("Error in tracking algorithm");
         }
