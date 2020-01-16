@@ -38,8 +38,9 @@ function getPeripherals() {
     return fullList.map(p => {
         let activityTime = rawToAi.getActivityTime(p.address);
         p.activityTime = activityTime;
+        let {interval, ...rest} = p //don't send some keys
         //TODO put here tracking info
-        return p
+        return rest
     });
 }
 
@@ -71,25 +72,35 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
                 rep.startedRaw = true;
                 //matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), green);
 
-                // setInterval(async () => {
-                //     let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
-                //     var logger = fs.createWriteStream('./logs/' + filename, {
-                //         flags: 'a' // 'a' means appending (old data will be preserved)
-                //     })
-                //     //console.log(convertToCSV(rep.rawData))
-                //     if (rep.rawData.length > 0)
-                //         logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
+                if(peripheralPosition === 'FOOT'){
+                    rep.interval = setInterval(async () => {
+                        let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
+                        var logger = fs.createWriteStream('./logs/' + filename, {
+                            flags: 'a' // 'a' means appending (old data will be preserved)
+                        })
+                        //console.log(convertToCSV(rep.rawData))
+                        if (rep.rawData.length > 0)
+                            await logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
 
-                //     tracking((err, result) => {
-                //         if(err){
-                //             console.log(err);
-                //         }
-                //         else if (result){
-                //             rep.tracking = JSON.parse(result)
-                //         }
-                //     }, filename)
-                // }, 30000)
-
+                        tracking((err, result) => {
+                            if(err){
+                                console.log(err);
+                            }
+                            else if (result){
+                                rep.tracking = JSON.parse(result)
+                                //console.log(rep.tracking) //SEND
+                                index.SendSteps(gameId, ppgId, rep.tracking);
+                                fs.unlink('./logs/' + filename, (err) => {
+                                    if (err) {
+                                        console.error(err)
+                                        return
+                                    }
+                                })
+                            }
+                        }, filename)
+                    }, 30000)
+                }
+                
                 rawCharacteristic.on('data', function (data, isNotification) {
                     let outputs = [];
                     let arr = Array.prototype.slice.call(data, 0)
@@ -130,7 +141,8 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
                             gyrZ *= ratio_GYR;
                         }
                     }
-                    rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
+                    if(peripheralPosition === 'FOOT')
+                        rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
 
                     nSample = (nSample * 0.02).toFixed(2);
                     //Depending on the sensor position
@@ -182,6 +194,7 @@ function idle(peripheralAddress) {
                 console.log('Stopped RAW');
                 //matrix.setPixel(rep.ledId % 8, 2 + ~~(rep.ledId / 8), red);
                 rep.startedRaw = false;
+                clearInterval(rep.interval);
                 rawToAi.reset(peripheralAddress);
                 // let filename = 'log_' + new Date().toISOString().slice(0, 19) + '_' + rep.address + '.csv';
                 // var logger = fs.createWriteStream('./logs/' + filename, {
@@ -190,7 +203,7 @@ function idle(peripheralAddress) {
                 // //console.log(convertToCSV(rep.rawData))
                 // if (rep.rawData.length > 0)
                 //     logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
-                // rep.rawData = [];
+                rep.rawData = [];
             });
         })
     }
@@ -296,8 +309,9 @@ noble.on('discover', function (peripheral) {
 
         peripheral.once('disconnect', function () {
             console.log(address, 'disconnected');
+            clearInterval(fullList.find((p => p.address === address)).interval);
             index.Disconnected(peripheral.address);
-            let tempLedId = fullList.find(p => p.address == peripheral.address).ledId;
+            //let tempLedId = fullList.find(p => p.address == peripheral.address).ledId;
             //matrix.setPixel(tempLedId % 8, 2 + ~~(tempLedId / 8), off);
             peripherals = peripherals.filter(p => { return p.address !== peripheral.address })
             fullList = fullList.filter(p => { return p.address !== peripheral.address })
@@ -321,7 +335,7 @@ function tracking(callback, filename) {
     let error = false;
     //TODO instead of saving the raw data to file, save to DB
     var spawn = require('child_process').spawn,
-	 ls = spawn('octave', ['./services/inertial_pdr.m',
+	 ls = spawn('octave-cli', ['./services/inertial_pdr.m',
              './logs/' + filename //TODO fix filename
          ]);
 
