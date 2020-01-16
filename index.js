@@ -1,5 +1,6 @@
 var mqtt = require('mqtt')
 var client = mqtt.connect('mqtt://192.168.0.122')
+//var client = mqtt.connect('mqtt://192.168.1.1')
 
 client.on('connect', function () {
     client.subscribe('operation');
@@ -74,6 +75,12 @@ function SendJumps(gameId, ppgId, data) {
     client.publish('metrics/' + gameId + '/jumps', JSON.stringify(f));
 }
 
+function SendSteps(gameId, ppgId, data) {
+    let f = {gameId, ppgId, 'steps': data.Steps, 'distance': data.Distance};
+    console.log(f)
+    client.publish('metrics/' + gameId + '/steps', JSON.stringify(f));
+}
 module.exports.Disconnected = Disconnected;
 module.exports.SendActivityTimeData = SendActivityTimeData;
 module.exports.SendJumps = SendJumps;
+module.exports.SendSteps = SendSteps;
