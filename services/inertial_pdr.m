@@ -214,4 +214,4 @@ endfor
 
 printf('{"X": "%i", "Y":"%i", "Walking":"%i"}],\n', out(data_size, :)');
 
-printf('{"Steps": "%d","Distance":"%i"}\n', steps, distance(data_size));
+printf('"Steps": "%d","Distance":"%i"}\n', steps, distance(data_size));
