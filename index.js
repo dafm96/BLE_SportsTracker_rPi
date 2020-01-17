@@ -80,8 +80,8 @@ function SendSteps(gameId, ppgId, data) {
     client.publish('metrics/' + gameId + '/steps', JSON.stringify(f));
 }
 
-function SendDribbles(gameId, ppgId, data) {
-    let f = {gameId, ppgId, 'dribbling_time': data};
+function SendDribbles(gameId, ppgId, dribbleCount, dribblingTime) {
+    let f = {gameId, ppgId, "dribbleCount": dribbleCount, 'dribblingTime': dribblingTime};
     client.publish('metrics/' + gameId + '/dribble', JSON.stringify(f));
 }
 
