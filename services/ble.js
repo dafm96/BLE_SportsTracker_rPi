@@ -13,7 +13,7 @@ var fs = require('fs')
 
 const index = require('../index');
 const JumpTracker = require('./jumpTracker.js');
-const DribbleTracker = require('./jumpTracker.js');
+const DribbleTracker = require('./dribbleTracker');
 
 var fullList = []
 var peripherals = [];
@@ -61,7 +61,7 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
         if(peripheralPosition === 'BACK')
             var jt = new JumpTracker(gameId, ppgId, peripheralAddress);
         if(peripheralPosition === 'HAND')
-            var dt = new DribbleTracker(gameId, ppgId, peripheralAddress);
+            var dt = new DribbleTracker(gameId, ppgId, peripheralAddress, 20);
         peripheral.discoverSomeServicesAndCharacteristics(['ff30'], ['ff35', 'ff38'], function (error, services, characteristics) {
             var SmartLifeService = services[0];
             var stateCharacteristic = characteristics.find(c => c.uuid == 'ff35');
@@ -149,7 +149,7 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
                     if(peripheralPosition === 'BACK')
                         jt.analyzeData(accX, nSample);
                     if(peripheralPosition === 'HAND')
-                        dt.analyzeData(accX, gyroX);//???
+                        dt.analyzeData(accX, gyrX, nSample);
                     accX = accX * 9.8;
                     accY = accY * 9.8;
                     accZ = accZ * 9.8;
