@@ -1,5 +1,5 @@
 var ft = require('fourier-transform');
-//var index = require('../index')
+var index = require('../index')
 
 const GYRO_THRESHOLD = 250;
 const FOURIER_MAXTHRESHOLD = 0.1;
@@ -57,20 +57,20 @@ class DribbleTracker {
     * Main method, called by the main class
     * @param {string} line line of a csv file
     */
-    analyzeData (line) {
-        var lineArray = line//.split(",");
-        var accY = parseFloat(lineArray[5]);
-        var gyroX = parseFloat(lineArray[7]);
-        this.lastTime = parseFloat(lineArray[10].substring(lineArray[10].lastIndexOf(":") + 1, lineArray[10].indexOf("+")));
-        var dataSession = parseInt(lineArray[2]);
+    analyzeData (acceY, gyrX, nSample) {
+        //var lineArray = line//.split(",");
+        var accY = acceY;
+        var gyroX = gyrX;
+        this.lastTime = nSample;
+        //var dataSession = parseInt(lineArray[2]);
 
-        if (dataSession !== this.currentSession) {
-            this.evaluateLastSamples();
-                /* add */ (this.dribblesPerSession.push(this.dribbleCount) > 0);
-            this.dribbleCount = 0;
-            this.resetData();
-            this.currentSession = dataSession;
-        }
+        // if (dataSession !== this.currentSession) {
+        //     this.evaluateLastSamples();
+        //         /* add */ (this.dribblesPerSession.push(this.dribbleCount) > 0);
+        //     this.dribbleCount = 0;
+        //     this.resetData();
+        //     this.currentSession = dataSession;
+        // }
 
         if (accY > 8 || accY < -8)
             accY /= 1000;
@@ -85,7 +85,7 @@ class DribbleTracker {
             }
             else if (accY >= ACC_THRESHOLD || gyroX >= GYRO_THRESHOLD) {
                 this.dribbling = true;
-                this.firstMax[0] = this.lastTime;
+                this.startTime = this.lastTime;
                 this.firstMax[1] = accY;
             }
         }
@@ -147,12 +147,14 @@ class DribbleTracker {
     fourierAnalysis() {
         var fourierAccMax = this.getFourierMax(true);
         var fourierGyroMax = this.getFourierMax(false);
-        console.info("Fourier Acc: " + fourierAccMax[0]);
-        console.info("Fourier Gyro: " + fourierGyroMax[0]);
-        console.info();
+        // console.info("Fourier Acc: " + fourierAccMax[0]);
+        // console.info("Fourier Gyro: " + fourierGyroMax[0]);
+        // console.info();
         if (fourierAccMax[0] < FOURIER_MAXTHRESHOLD && fourierGyroMax[0] < FOURIER_MAXTHRESHOLD && fourierAccMax[0] > FOURIER_MINTHRESHOLD && fourierGyroMax[0] > FOURIER_MINTHRESHOLD) {
             this.countDribbles();
             this.checkDribbleTime();
+            index.SendDribbles(this.gameId, this.ppgId, this.dribbleCount, this.dribblingTime);
+
         }
     };
 
