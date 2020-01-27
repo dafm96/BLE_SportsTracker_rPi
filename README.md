@@ -16,3 +16,5 @@ sudo setcap cap_net_raw+eip $(eval readlink -f which node)
 cmd.writeUInt16LE(0x0016, 17); // min interval
 cmd.writeUInt16LE(0x0032, 19); // max interval
 ```
+
+5. Connect rPi to server AP (gateway 192.168.1.1) for MQTT server
