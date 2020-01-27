@@ -149,7 +149,7 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
                     if(peripheralPosition === 'BACK')
                         jt.analyzeData(accX, nSample);
                     if(peripheralPosition === 'HAND')
-                        dt.analyzeData(accX, gyrX, nSample);
+                        dt.analyzeData(accY, gyrX, nSample);
                     accX = accX * 9.8;
                     accY = accY * 9.8;
                     accZ = accZ * 9.8;
