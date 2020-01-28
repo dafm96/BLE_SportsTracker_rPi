@@ -3,7 +3,7 @@ var index = require('../index')
 
 const GYRO_THRESHOLD = 250;
 const FOURIER_MAXTHRESHOLD = 0.1;
-const FOURIER_MINTHRESHOLD = 0.04;
+const FOURIER_MINTHRESHOLD = 0.035;
 const ACC_THRESHOLD = 2.5;
 const FOURIER_ACCYTHRESHOLD = 0.6;
 const MAX_FOUND = 5;
