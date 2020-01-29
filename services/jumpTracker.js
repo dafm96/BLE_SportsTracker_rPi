@@ -120,7 +120,7 @@ class JumpTracker {
                 }
                 else if (this.max2[1] > MAX2THRESHOLD && this.jumpSamples[i][1] <= this.max2[1]) {
                     this.max2Found++;
-                    if (this.max2Found === this.VALUEFOUND) {
+                    if (this.max2Found === VALUEFOUND) {
                         this.finishedJumpAnalysis();
                     }
                 }
