@@ -141,13 +141,13 @@ function startRaw(peripheralAddress, gameId, ppgId, peripheralPosition) {
                             gyrZ *= ratio_GYR;
                         }
                     }
-                    if(peripheralPosition === 'FOOT')
-                        rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
 
                     nSample = (nSample * 0.02).toFixed(2);
                     //Depending on the sensor position
-                    if(peripheralPosition === 'BACK')
+                    if(peripheralPosition === 'BACK'){
                         jt.analyzeData(accX, nSample);
+                        rawToAi.convertRawToActivity(gameId, ppgId, peripheralAddress, [accX, accY, accZ]);
+                    }
                     if(peripheralPosition === 'HAND')
                         dt.analyzeData(accY, gyrX, nSample);
                     accX = accX * 9.8;
