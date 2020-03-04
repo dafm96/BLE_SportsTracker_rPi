@@ -200,9 +200,11 @@ function idle(peripheralAddress) {
                 // var logger = fs.createWriteStream('./logs/' + filename, {
                 //     flags: 'a' // 'a' means appending (old data will be preserved)
                 // })
-                // //console.log(convertToCSV(rep.rawData))
-                // if (rep.rawData.length > 0)
+                // console.log(convertToCSV(rep.rawData))
+                // if (rep.rawData.length > 0){
+                //     logger.write("nSample;accX;accY;accZ;gyrX;gyrY;gyrZ\n");
                 //     logger.write("" + convertToCSV(rep.rawData).replace(/,/gi, ';') + "\n");
+                // }
                 rep.rawData = [];
             });
         })
